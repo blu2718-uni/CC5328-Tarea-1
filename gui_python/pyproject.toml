@@ -1,18 +1,12 @@
 [project]
 name = "gui-python"
 version = "0.1.0"
-description = "Add your description here"
+description = "Conexion Serial Microcontrolador-PC"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.11"
 dependencies = [
     "matplotlib>=3.11.2",
     "pyqt6>=6.11.0",
+    "pyserial>=3.5",
     "pyside6>=6.11.2",
 ]
-
-[project.scripts]
-gui-python = "gui_python:main"
-
-[build-system]
-requires = ["uv_build>=0.12.1,<0.13.0"]
-build-backend = "uv_build"
