@@ -8,9 +8,19 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* Puerto usado por el protocolo (consola UART0) */
+#define PROTOCOLO_UART_PORT 0
+
 /* Configura UART0 (TX GPIO1 / RX GPIO3, 115200 8N1), instala el driver,
  * crea el mutex TX y emite un banner mínimo en el arranque. */
 void protocolo_init(void);
+
+/* Baudio del arranque */
+#define PROTOCOLO_BAUDIOS_DEFAULT 115200
+
+/* Cambia el baudio del UART0 en caliente (hot-swap); lo transmitido
+ * después de la llamada sale a la velocidad nueva. */
+void protocolo_fijar_baudios(uint32_t baudios);
 
 /* Transmite <datos>*CK\n: armado usando un cursor y varios memcpy+len.
  * Evita dataraces entre tasks usando un mutex; len no incluye '\0' final. */
@@ -25,5 +35,8 @@ uint8_t protocolo_checksum(const char *cuerpo);
 
 /* Agrega al cursor un entero en milésimas con formato d.ddd (para valores). */
 void protocolo_agregar_milig(char *buf, size_t *len, int32_t milig);
+
+/* Agrega al cursor un entero con signo (dígitos en reversa). */
+void protocolo_agregar_entero(char *buf, size_t *len, int32_t valor);
 
 #endif /* PROTOCOL_H */

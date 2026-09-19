@@ -11,9 +11,10 @@
 #include <freertos/semphr.h>
 #include <driver/uart.h>
 
-#define UART_PORT_NUM 0
+#define UART_PORT_NUM PROTOCOLO_UART_PORT
 
-#define RX_BUF_SIZE 2048
+/* 4096: ráfagas largas mientras se cambia de baudio */
+#define RX_BUF_SIZE 4096
 
 /* Línea completa = cuerpo + *CK + \n */
 #define LINEA_MAX 96
@@ -97,6 +98,29 @@ void protocolo_agregar_milig(char *buf, size_t *len, int32_t milig) {
     buf[(*len)++] = (char)('0' + frac / 100);
     buf[(*len)++] = (char)('0' + (frac / 10) % 10);
     buf[(*len)++] = (char)('0' + frac % 10);
+}
+
+/* Agrega un entero con signo al cursor; dígitos en reversa. */
+void protocolo_agregar_entero(char *buf, size_t *len, int32_t valor) {
+    uint32_t sin_signo = (valor < 0) ? (uint32_t)(-valor) : (uint32_t)valor;
+    if (valor < 0) {
+        buf[(*len)++] = '-';
+    }
+    char digitos[10];
+    size_t nd = 0;
+    do {
+        digitos[nd++] = (char)('0' + sin_signo % 10);
+        sin_signo /= 10;
+    } while (sin_signo != 0);
+    while (nd != 0) {
+        buf[(*len)++] = digitos[--nd];
+    }
+}
+
+/* Cambia el baudio del UART0 en caliente (hot-swap); lo transmitido
+ * después de la llamada sale a la velocidad nueva. */
+void protocolo_fijar_baudios(uint32_t baudios) {
+    uart_set_baudrate(UART_PORT_NUM, baudios);
 }
 
 /* Esta función es para probar que todo funcione. */

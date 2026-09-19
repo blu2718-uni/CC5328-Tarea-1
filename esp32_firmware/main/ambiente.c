@@ -22,24 +22,6 @@
 /* Periodo de emisión en segundos */
 static uint32_t periodo_s = 30;
 
-/* Agrega un entero (con signo) al cursor; misma técnica de dígitos
- * en reversa que protocolo_agregar_milig */
-static void agregar_entero(char *buf, size_t *len, int32_t valor) {
-    uint32_t sin_signo = (valor < 0) ? (uint32_t)(-valor) : (uint32_t)valor;
-    if (valor < 0) {
-        buf[(*len)++] = '-';
-    }
-    char digitos[10];
-    size_t nd = 0;
-    do {
-        digitos[nd++] = (char)('0' + sin_signo % 10);
-        sin_signo /= 10;
-    } while (sin_signo != 0);
-    while (nd != 0) {
-        buf[(*len)++] = digitos[--nd];
-    }
-}
-
 /* task creation. */
 static void tarea_ambiente(void *arg) {
     (void)arg;
@@ -57,11 +39,11 @@ static void tarea_ambiente(void *arg) {
         size_t len = 0;
         memcpy(buf + len, ETIQUETA, ETIQUETA_LEN);
         len += ETIQUETA_LEN;
-        agregar_entero(buf, &len, temp_dec / 10);
+        protocolo_agregar_entero(buf, &len, temp_dec / 10);
         buf[len++] = '.';
-        agregar_entero(buf, &len, temp_dec % 10);
+        protocolo_agregar_entero(buf, &len, temp_dec % 10);
         buf[len++] = ',';
-        agregar_entero(buf, &len, hr);
+        protocolo_agregar_entero(buf, &len, hr);
         protocolo_enviar_frame(buf, len);
         vTaskDelayUntil(&ultimo, pdMS_TO_TICKS(periodo_s * 1000));
     }
@@ -69,4 +51,10 @@ static void tarea_ambiente(void *arg) {
 
 void ambiente_init(void) {
     xTaskCreate(tarea_ambiente, "ambiente", 4096, NULL, 10, NULL);
+}
+
+/* Cambia el periodo de emisión; escritura atómica de 32 bits,
+ * la task lo lee al inicio de cada ciclo */
+void ambiente_fijar_periodo(uint32_t segundos) {
+    periodo_s = segundos;
 }
