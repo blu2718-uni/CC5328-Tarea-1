@@ -49,6 +49,15 @@ typedef struct {
 /* Default de configuración: función 1, 4 g, 100 Hz */
 sensor_config_t sensor_config_default(void);
 
+/* Aplican un cambio de config al eje bajo mutex; la task lo toma en
+ * su siguiente tick. */
+void sensors_fijar_funcion(sensor_eje_t eje, sensor_funcion_t funcion);
+void sensors_fijar_amplitud(sensor_eje_t eje, uint8_t amplitud_g);
+void sensors_fijar_fs(sensor_eje_t eje, uint16_t fs_hz);
+
+/* Defaults en los 3 ejes y fase reiniciada (sin reiniciar la MCU). */
+void sensors_reiniciar(void);
+
 /* Crea las 3 tasks de muestreo (X, Y y Z); cada una emite por tick
  * ACELEROMETRO,<eje>,<valor>*CK vía protocolo (protocol.h). */
 void sensors_init(void);
