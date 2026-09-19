@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 /* Configura UART0 (TX GPIO1 / RX GPIO3, 115200 8N1), instala el driver,
- * crea el mutex TX y emite texto en el arranque con comandos checksumados. */
+ * crea el mutex TX y emite un banner mínimo en el arranque. */
 void protocolo_init(void);
 
 /* Transmite <datos>*CK\n: armado usando un cursor y varios memcpy+len.
@@ -22,5 +22,8 @@ void protocolo_enviar_linea(const char *cuerpo);
 
 /* Checksum con XOR de todos los bytes del cuerpo (sin '*' ni checksum). */
 uint8_t protocolo_checksum(const char *cuerpo);
+
+/* Agrega al cursor un entero en milésimas con formato d.ddd (para valores). */
+void protocolo_agregar_milig(char *buf, size_t *len, int32_t milig);
 
 #endif /* PROTOCOL_H */

@@ -75,6 +75,30 @@ void protocolo_enviar_linea(const char *cuerpo) {
     protocolo_enviar_frame(cuerpo, strlen(cuerpo));
 }
 
+/* Agrega el entero milig al cursor con formato d.ddd (milésimas);
+ * parte entera por dígitos en reversa, 3 decimales fijos. */
+void protocolo_agregar_milig(char *buf, size_t *len, int32_t milig) {
+    if (milig < 0) {
+        buf[(*len)++] = '-';
+        milig = -milig;
+    }
+    uint32_t entero = (uint32_t)milig / 1000;
+    uint32_t frac = (uint32_t)milig % 1000;
+    char digitos[10];
+    size_t nd = 0;
+    do {
+        digitos[nd++] = (char)('0' + entero % 10);
+        entero /= 10;
+    } while (entero != 0);
+    while (nd != 0) {
+        buf[(*len)++] = digitos[--nd];
+    }
+    buf[(*len)++] = '.';
+    buf[(*len)++] = (char)('0' + frac / 100);
+    buf[(*len)++] = (char)('0' + (frac / 10) % 10);
+    buf[(*len)++] = (char)('0' + frac % 10);
+}
+
 /* Esta función es para probar que todo funcione. */
 static void banner(void) {
     enviar_raw("tarea-1 listo (version 1.0)\n",

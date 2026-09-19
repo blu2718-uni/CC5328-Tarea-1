@@ -16,28 +16,6 @@
 #define ETIQUETA "ACELEROMETRO,"
 #define ETIQUETA_LEN (sizeof(ETIQUETA) - 1)
 
-static void agregar_milig(char *buf, size_t *len, int32_t milig) {
-    if (milig < 0) {
-        buf[(*len)++] = '-';
-        milig = -milig;
-    }
-    uint32_t entero = (uint32_t)milig / 1000;
-    uint32_t frac = (uint32_t)milig % 1000;
-    char digitos[10];
-    size_t nd = 0;
-    do {
-        digitos[nd++] = (char)('0' + entero % 10);
-        entero /= 10;
-    } while (entero != 0);
-    while (nd != 0) {
-        buf[(*len)++] = digitos[--nd];
-    }
-    buf[(*len)++] = '.';
-    buf[(*len)++] = (char)('0' + frac / 100);
-    buf[(*len)++] = (char)('0' + (frac / 10) % 10);
-    buf[(*len)++] = (char)('0' + frac % 10);
-}
-
 static void tarea_datos(void *arg) {
     (void)arg;
     TickType_t ultimo = xTaskGetTickCount();
@@ -53,7 +31,7 @@ static void tarea_datos(void *arg) {
             len += ETIQUETA_LEN;
             buf[len++] = EJES[i];
             buf[len++] = ',';
-            agregar_milig(buf, &len, lroundf(valor * 1000.0f));
+            protocolo_agregar_milig(buf, &len, lroundf(valor * 1000.0f));
             protocolo_enviar_frame(buf, len);
         }
         vTaskDelayUntil(&ultimo, pdMS_TO_TICKS(PERIODO_MS));
