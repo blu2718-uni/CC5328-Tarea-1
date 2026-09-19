@@ -1,5 +1,5 @@
 idf_component_register(
-SRCS "main.c"
-PRIV_REQUIRES spi_flash nvs_flash
-INCLUDE_DIRS ""
+SRCS "main.c" "protocol.c"
+REQUIRES esp_driver_uart esp_driver_gpio
+INCLUDE_DIRS "."
 )
