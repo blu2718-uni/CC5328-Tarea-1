@@ -141,8 +141,10 @@ class Ventana(QMainWindow):
 
     def mostrar_respuesta(self, cuerpo: str):
         if cuerpo.startswith("OK,BAUDIOS"):
-            nuevo = int(cuerpo.split(",")[1])
-            QTimer.singleShot(100, lambda: self._pedir_reapertura(nuevo))
+            campos = cuerpo.split(",")
+            if len(campos) == 3:
+                nuevo = int(campos[2])
+                QTimer.singleShot(100, lambda: self._pedir_reapertura(nuevo))
         self.ui.statusbar.showMessage(cuerpo, 4000)
 
     def alternar_pausa(self):
