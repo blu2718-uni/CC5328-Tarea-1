@@ -14,7 +14,7 @@ class ReceptorSerial(QObject):
     respuesta = pyqtSignal(str)  # cuerpo completo OK/ERROR
     conexion = pyqtSignal(bool, str)  # estado + motivo del fallo
 
-    def __init__(self, puerto: str, baudios: int):
+    def __init__(self, puerto, baudios):
         super().__init__()
         self.serie = None
         self.puerto = puerto
@@ -82,18 +82,22 @@ class ReceptorSerial(QObject):
     def alternar_pausa(self):
         self.pausado = not self.pausado
 
-    def mandar(self, texto: str):
+    def baudios(self):
+        """Baudio actual del puerto abierto."""
+        return self._baudios
+
+    def mandar(self, texto):
         """Encola un comando listo para el puerto."""
         self.cola_tx.put(texto)
 
-    def pedir_baudios(self, baudios: int):
+    def pedir_baudios(self, baudios):
         self._baudios_pendientes = baudios
 
     def cerrar(self):
         if self.serie is not None and self.serie.is_open:
             self.serie.close()
 
-    def repartir(self, cuerpo: str):
+    def repartir(self, cuerpo):
         if cuerpo.startswith("ACELEROMETRO,"):
             try:
                 _, eje, valor = cuerpo.split(",")
