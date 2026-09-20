@@ -40,7 +40,7 @@ Todo comando recibe `OK,<cmd>,<detalle>*CK` o `ERROR,<cmd>,<motivo>*CK` por part
 
 | Comando | Válidos | Efecto |
 |---|---|---|
-| `INICIAR` | sin argumentos | defaults (función 1, 4 g, 100 Hz), fase 0, ambiente 30 s y baudio 115200 — sin reiniciar la MCU |
+| `INICIAR` | sin argumentos | defaults (función 1, 4 g, 100 Hz), fase 0, ambiente 30 s y baudio 115200 |
 | `FUNCION,<eje>,<n>` | 1 armónica · 2 modulada en amplitud · 3 multicomponente | cambia la señal del eje |
 | `AMPLITUD,<eje>,<g>` | 4 · 8 · 16 | amplitud del eje en g |
 | `FRECUENCIA,<eje>,<fs>` | 50 · 100 · 200 · 500 · 1000 | fs de **muestreo** del eje, no la frecuencia de la señal |
