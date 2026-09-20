@@ -29,7 +29,7 @@ static bool parsear_uint(const char *s, uint32_t *out) {
             return false;
         }
         v = v * 10 + (uint32_t)(*s - '0');
-        if (v > 99999) {
+        if (v > 999999) { /* 6 dígitos alcanza para BAUDIOS 921600 */
             return false;
         }
         s++;
