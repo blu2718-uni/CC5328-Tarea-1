@@ -56,6 +56,10 @@ def validar(texto):
     cuerpo, sep, ck = limpio.partition("*")
     if not sep or len(ck) != 2:
         return None
-    if checksum(cuerpo) != ck.upper():
+    try:
+        esperado = checksum(cuerpo)
+    except UnicodeEncodeError:
+        return None  # bytes basura de una decodificación con sustitución
+    if esperado != ck.upper():
         return None
     return cuerpo

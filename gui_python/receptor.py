@@ -31,32 +31,40 @@ class ReceptorSerial(QObject):
     def arrancar(self):
         try:
             self.serie = serial.Serial(self.puerto, self._baudios, timeout=0)
-        except serial.SerialException as motivo:
+            self.serie.write(protocol.comando_iniciar().encode("ascii"))
+        except (serial.SerialException, OSError) as motivo:
             self.conexion.emit(False, str(motivo))
+            self.serie = None
             return
         self.conexion.emit(True, "")
-        self.serie.write(protocol.comando_iniciar().encode("ascii"))
         self.timer.start()
 
     @pyqtSlot()
     def leer(self):
         if self.serie is None or not self.serie.is_open:
             return
-        self.chequear_baudios()
-        self.escribir_pendientes()
-        n = self.serie.in_waiting
-        if n == 0:
+        try:
+            self.chequear_baudios()
+            self.escribir_pendientes()
+            n = self.serie.in_waiting
+            if n == 0:
+                return
+            self.buffer += self.serie.read(n).decode(errors="replace")
+        except (serial.SerialException, OSError) as motivo:
+            # puerto desaparecido o falla de I/O: avisar y quedar muerto
+            # en orden (la GUI limpia el hilo al recibir conexion(False))
+            self.conexion.emit(False, str(motivo))
+            self.serie = None
             return
-        self.buffer += self.serie.read(n).decode(errors="replace")
-        if len(self.buffer) > 4096:
+        if len(self.buffer) > 4096:  # línea corrupta sin cierre: descarte
             self.buffer = ""
             return
         lineas = self.buffer.split("\n")
-        self.buffer = lineas.pop()
+        self.buffer = lineas.pop()  # resto parcial para el próximo sondeo
         for linea in lineas:
             cuerpo = protocol.validar(linea)
             if cuerpo is None:
-                continue
+                continue  # descarte silencioso
             self.repartir(cuerpo)
 
     def chequear_baudios(self):
