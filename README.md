@@ -1,4 +1,7 @@
 # CC5328-Tarea-1
+Útiles Faúndez
+Julio Yáñez
+
 Demo: https://youtu.be/hoQxYrGXY4g
 
 ## Firmware: build y flash
