@@ -1,6 +1,6 @@
 # CC5328-Tarea-1
-Útiles Faúndez
-Julio Yáñez
+- Útiles Faúndez
+- Julio Yáñez
 
 Demo: https://youtu.be/hoQxYrGXY4g
 
