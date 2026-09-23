@@ -1,4 +1,5 @@
 # CC5328-Tarea-1
+Demo: https://youtu.be/hoQxYrGXY4g
 
 ## Firmware: build y flash
 
